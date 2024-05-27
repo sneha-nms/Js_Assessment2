@@ -50,7 +50,7 @@ function updatePaginationControls() {
 
   
     let prevButton = document.createElement('button');
-    prevButton.textContent = 'Previous';
+    prevButton.innerHTML = '<i class="fa-solid fa-backward"></i>';
     prevButton.id = 'prev-button';
     prevButton.disabled = currentPage === 1;
     prevButton.addEventListener('click', () => changePage(currentPage - 1));
@@ -75,7 +75,7 @@ function updatePaginationControls() {
     }
 
     let nextButton = document.createElement('button');
-    nextButton.textContent = 'Next';
+    nextButton.innerHTML= '<i class="fa-solid fa-forward"></i>';
     nextButton.id = 'next-button';
     nextButton.disabled = currentPage === totalPages;
     nextButton.addEventListener('click', () => changePage(currentPage + 1));
