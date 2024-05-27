@@ -1,17 +1,11 @@
 'use strict';
 
-let ApiUrl = 'https://dummyjson.com/products'; 
+let ApiUrl = 'https://dummyjson.com/products';
 let ItemsPerPage = 3;
 let currentPage = 1;
 let totalPages = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
-    let prevButton = document.getElementById('prev-button');
-    let nextButton = document.getElementById('next-button');
-
-    prevButton.addEventListener('click', () => changePage(currentPage - 1));
-    nextButton.addEventListener('click', () => changePage(currentPage + 1));
-
     fetchData();
 });
 
@@ -22,7 +16,7 @@ function fetchData() {
             let products = data.products;
             totalPages = Math.ceil(products.length / ItemsPerPage);
             displayProducts(products.slice((currentPage - 1) * ItemsPerPage, currentPage * ItemsPerPage));
-            PaginationControls();
+            updatePaginationControls();
         })
         .catch(error => console.error('Error fetching data:', error));
 }
@@ -50,22 +44,47 @@ function displayProducts(products) {
     });
 }
 
-function PaginationControls() {
-    let buttons = document.querySelectorAll('.change-button');
-    buttons.forEach(button => {
-      
-        button.style.backgroundColor=button.textContent == currentPage ? '#191b1f' : 'white';
-       
-    });
+function updatePaginationControls() {
+    let paginationContainer = document.getElementById('pagination-controls');
+    paginationContainer.innerHTML = '';
 
-    document.getElementById('prev-button').disabled = currentPage === 1;
+  
+    let prevButton = document.createElement('button');
+    prevButton.textContent = 'Previous';
+    prevButton.id = 'prev-button';
+    prevButton.disabled = currentPage === 1;
+    prevButton.addEventListener('click', () => changePage(currentPage - 1));
+    paginationContainer.appendChild(prevButton);
 
-    document.getElementById('next-button').disabled = currentPage === totalPages;
+  
+    let startPage = Math.max(1, currentPage - 1);
+    let endPage = Math.min(totalPages, currentPage + 2);
+
+ 
+        startPage = Math.max(1, endPage - 3);
+        endPage = Math.min(totalPages, startPage + 3);
+   
+
+    for (let i = startPage; i <= endPage; i++) {
+        let pageButton = document.createElement('button');
+        pageButton.textContent = i;
+        pageButton.className = 'change-button';
+        pageButton.style.backgroundColor = (i === currentPage) ? '#191b1f' : 'white';
+        pageButton.addEventListener('click', () => changePage(i));
+        paginationContainer.appendChild(pageButton);
+    }
+
+    let nextButton = document.createElement('button');
+    nextButton.textContent = 'Next';
+    nextButton.id = 'next-button';
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.addEventListener('click', () => changePage(currentPage + 1));
+    paginationContainer.appendChild(nextButton);
 }
 
-
-
 function changePage(page) {
-    currentPage = page;
-    fetchData();
+    if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        fetchData();
+    }
 }
